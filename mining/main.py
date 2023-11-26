@@ -1,4 +1,5 @@
 import asyncio
+import functools
 from blockchain import Blockchain
 from miner import Miner
 import websockets
@@ -20,7 +21,7 @@ def get_local_ip():
 local_ip = get_local_ip()
 print(f"This server's local IP: {local_ip}")
 
-async def echo(websocket, path, blockchain: Blockchain):
+async def echo(websocket, blockchain: Blockchain):
     async for message in websocket:
         print(f"Received a message from client: {message}")
         # Echo the message back to the client
@@ -30,7 +31,7 @@ async def main(miner, blockchain):
     task = asyncio.create_task(miner.continuous_mining())
     print("Started")
     print((blockchain))
-    async with websockets.serve(lambda ws, path: echo(ws, path, blockchain), local_ip, 8765):
+    async with websockets.serve(functools.partial(echo, blockchain=blockchain), local_ip, 8765):
         await asyncio.Future()  # Run forever
 
 blockchain = Blockchain()
