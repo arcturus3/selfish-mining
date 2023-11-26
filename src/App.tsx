@@ -1,30 +1,18 @@
-import { useState, useMemo } from 'react';
+import {useState} from 'react';
 import {useControls} from 'leva'
 import useWebSocket from 'react-use-websocket';
-import {animated, useSpring} from '@react-spring/web'
-import {Blocktree as BlockStore} from './Blocktree'
-import {blocktree} from '../data'
-
-type Hash = number;
-
-type Block = {
-  parent: Hash,
-  minerType: 'honest' | 'adversary'
-};
-
-type Blocks = Map<Hash, Block>;
+import {Blocktree, Hash, Block, Blocks} from './Blocktree'
+import data from '../data.json'
 
 export const App = () => {
-  const [blocks, setBlocks] = useState<Blocks>()
-
+  const [blocks, setBlocks] = useState<Blocks>(() => {
+    const entries = Object.entries(data).map(([hash, block]) => [parseInt(hash), block]) as [Hash, Block][]
+    return new Map(entries)
+  })
   const socket = useWebSocket('wss://echo.websocket.org', {
     onMessage: (event) => setBlocks(JSON.parse(event.data))
   })
   const config = useControls({})
-
-  const spring = useSpring({
-    transform: `translateY(-${levels.length * 50}px)`
-  })
 
   const debugAddBlock = (parentHash: Hash) => {
     setBlocks(prev => {
@@ -41,7 +29,13 @@ export const App = () => {
 
   return (
     <div style={{display: 'flex', justifyContent: 'center'}}>
-      <Blocktree blocks={blocks} debugAddBlock={debugAddBlock} />
+      <Blocktree
+        blocks={blocks}
+        blockSize={100}
+        blockGap={100}
+        visibleHeight={6}
+        debugAddBlock={debugAddBlock}
+      />
     </div>
   )
 }
