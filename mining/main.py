@@ -25,12 +25,11 @@ async def echo(websocket, blockchain: Blockchain):
     async for message in websocket:
         print(f"Received a message from client: {message}")
         # Echo the message back to the client
-        await websocket.send(blockchain)
+        await websocket.send(str(blockchain))
 
 async def main(miner, blockchain):
     task = asyncio.create_task(miner.continuous_mining())
     print("Started")
-    print((blockchain))
     async with websockets.serve(functools.partial(echo, blockchain=blockchain), local_ip, 8765):
         await asyncio.Future()  # Run forever
 

@@ -21,4 +21,5 @@ class Miner:
         while True:
             # print(self.blockchain)
             await self.mine()
+            await asyncio.sleep(0)
         
