@@ -1,7 +1,9 @@
-import { BlurFilter } from 'pixi.js';
-import { Stage, Container, Sprite, useTick, Graphics } from '@pixi/react';
-import { useState, useMemo, useReducer, useRef } from 'react';
+import { useState, useMemo } from 'react';
+import {useControls} from 'leva'
+import useWebSocket from 'react-use-websocket';
 import {animated, useSpring} from '@react-spring/web'
+import {Blocktree as BlockStore} from './Blocktree'
+import {blocktree} from '../data'
 
 type Hash = number;
 
@@ -10,119 +12,37 @@ type Block = {
   minerType: 'honest' | 'adversary'
 };
 
-type Blocktree = Record<Hash, Block>;
+type Blocks = Map<Hash, Block>;
 
-const getLevels = (blocktree: Blocktree) => {
-  const children: Record<Hash, Hash[]> = {}
-  let genesisHash: Hash = -1
-  for (const [hash, block] of Object.entries(blocktree)) {
-    children[parseInt(hash)] = []
-    // genesis block has a parent hash of 0
-    if (block.parent === 0) genesisHash = parseInt(hash)
-  }
-  for (const [hash, block] of Object.entries(blocktree)) {
-    if (parseInt(hash) !== genesisHash) {
-      children[block.parent].push(parseInt(hash))
-    }
-  }
-  const result: Blocktree[] = [{[genesisHash]: blocktree[genesisHash]}]
-  let done = false
-  while (!done) {
-    const prevLevel = result[result.length - 1]
-    const currLevel: Blocktree = {}
-    for (const hash of Object.keys(prevLevel)) {
-      for (const child of children[parseInt(hash)]) {
-        currLevel[child] = blocktree[child]
-      }
-    }
-    if (Object.keys(currLevel).length > 0) {
-      result.push(currLevel)
-    } else {
-      done = true
-    }
-  }
-  return result
-}
+export const App = () => {
+  const [blocks, setBlocks] = useState<Blocks>()
 
-const getLayout = (blocktree: Blocktree) => {
-  const blockSize = 100
-  const blockGap = 100
-  const nodeGap = blockGap + blockSize
-  const levels = getLevels(blocktree)
-  const positions: Record<Hash, [number, number]> = {}
-  for (let i = 0; i < levels.length; i++) {
-    const hashes = Object.keys(levels[i])
-    for (let j = 0; j < hashes.length; j++) {
-      const x = (j - (hashes.length - 1) / 2) * nodeGap
-      const y = i * nodeGap
-      positions[parseInt(hashes[j])] = [x, y]
-    }
-  }
-  return positions
-}
-
-type BlocktreeProps = {
-  data: Blocktree
-}
-
-export const Blocktree = (props: BlocktreeProps) => {
-  const [blocktree, setBlocktree] = useState(props.data)
-  const blockSize = 100
-  const blockGap = 100
-  const positions = useMemo(() => getLayout(blocktree), [blocktree])
-  const levels = getLevels(blocktree)
-  const levelCounts = levels.map(level => Object.keys(level).length)
-  const width = (Math.max(...levelCounts) - 1) * (blockSize + blockGap) + blockSize
-  const height = (levels.length - 1) * (blockSize + blockGap) + blockSize
+  const socket = useWebSocket('wss://echo.websocket.org', {
+    onMessage: (event) => setBlocks(JSON.parse(event.data))
+  })
+  const config = useControls({})
 
   const spring = useSpring({
     transform: `translateY(-${levels.length * 50}px)`
   })
 
+  const debugAddBlock = (parentHash: Hash) => {
+    setBlocks(prev => {
+      const blocks = new Map(prev)
+      const hash = Math.floor(Math.random() * 1e6)
+      const block: Block = {
+        parent: parentHash,
+        minerType: 'honest',
+      }
+      blocks.set(hash, block)
+      return blocks
+    })
+  }
+
   return (
-    <animated.svg
-      viewBox={`${-width / 2} ${-blockSize / 2} ${width} ${height}`}
-      style={{width: width, height: height, ...spring}}
-    >
-      <rect
-        x={-width / 2}
-        y={-blockSize / 2}
-        width={width}
-        height={height}
-        fill='none'
-        stroke='black'
-        strokeWidth={2}
-      />
-      {Object.keys(blocktree).map(hash => (
-        <rect
-          key={hash}
-          x={positions[parseInt(hash)][0] - blockSize / 2}
-          y={positions[parseInt(hash)][1] - blockSize / 2}
-          width={blockSize}
-          height={blockSize}
-          fill={blocktree[parseInt(hash)].minerType === 'honest' ? 'white' : 'red'}
-          onClick={() => setBlocktree(prev => ({
-            ...prev,
-            [Math.floor(Math.random() * 1e6)]: {
-              parent: parseInt(hash),
-              minerType: 'honest',
-            }
-          }))}
-        />
-      ))}
-      {Object.entries(blocktree).map(([hash, block]) => (
-        block.parent === 0
-          ? null
-          : <line
-            key={hash}
-            x1={positions[parseInt(hash)][0]}
-            y1={positions[parseInt(hash)][1]}
-            x2={positions[block.parent][0]}
-            y2={positions[block.parent][1]}
-            stroke='white'
-            strokeWidth={8}
-          />
-      ))}
-    </animated.svg>
-  );
-};
+    <div style={{display: 'flex', justifyContent: 'center'}}>
+      <Blocktree blocks={blocks} debugAddBlock={debugAddBlock} />
+    </div>
+  )
+}
+
