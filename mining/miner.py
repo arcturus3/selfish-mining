@@ -19,5 +19,6 @@ class Miner:
             
     async def continuous_mining(self):
         while True:
+            # print(self.blockchain)
             await self.mine()
         

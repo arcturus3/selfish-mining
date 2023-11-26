@@ -28,7 +28,9 @@ async def echo(websocket, path, blockchain: Blockchain):
 
 async def main(miner, blockchain):
     task = asyncio.create_task(miner.continuous_mining())
-    async with websockets.serve(lambda ws, path: echo(ws, path, blockchain), local_ip, 6000):
+    print("Started")
+    print((blockchain))
+    async with websockets.serve(lambda ws, path: echo(ws, path, blockchain), local_ip, 8765):
         await asyncio.Future()  # Run forever
 
 blockchain = Blockchain()

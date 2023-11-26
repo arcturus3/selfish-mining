@@ -29,5 +29,5 @@ class Blockchain:
             chain.append(current)
             current = self.blockchain[current].get_parent()
         return chain[::-1]
-    def __repr__(self) -> str:
-        return self.blockchain
+    def __repr__(self):
+        return str(self.blockchain)

@@ -19,4 +19,4 @@ class Block:
         return self.parent
     
     def __repr__(self) -> str:
-        return (self.parent, self.type)
+        return str((self.parent, self.type))
