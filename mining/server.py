@@ -1,7 +1,7 @@
 from flask import Flask
-import asyncio
-import functools
 from blockchain import Blockchain
+
+from threading import Thread
 from miner import Miner
 
 blockchain = Blockchain()
@@ -11,24 +11,30 @@ app = Flask(__name__)
 @app.route('/start')
 def start():
     if "miner" not in app.config:
-        app.config["miner"] = asyncio.create_task(miner.continuous_mining())
+        thread = Thread(target=miner.continuous_mining)
+        app.config["miner"] = thread
+        thread.daemon = True  # Set as a daemon so it will be killed once the main thread is dead.
+        thread.start()
         return "Started!"
     else:
         return "Already Running!"
 
+@app.route('/')
+def root():
+    return "Miner Backend"
+    
 @app.route('/stop')
 def stop():
     if "miner" in app.config:
-        mining_task = app.config["miner"]
-        mining_task.cancel()
+        miner.stop()
         del app.config["miner"]
         return "Stopped!"
     else:
-        return "Never started"
+        return "Never started or Already Stopped!"
 
 @app.route('/blockchain')
-def stop():
+def get_blockchain():
     return str(blockchain)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=6000)
+    app.run(debug=True, port=8765)
