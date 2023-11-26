@@ -8,7 +8,6 @@ class Miner:
     def __init__(self, blockchain: Blockchain) -> None:
         self.blockchain = blockchain
         self.mining_powers = []
-        asyncio.run(self.continuous_mining())
         
     async def mine(self):
         parent = self.blockchain.tip

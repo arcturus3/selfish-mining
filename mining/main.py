@@ -32,4 +32,5 @@ async def main(blockchain):
 
 blockchain = Blockchain()
 miner = Miner(blockchain)
+task = asyncio.create_task(miner.continuous_mining())
 asyncio.run(main(blockchain))
