@@ -1,6 +1,7 @@
 import { BlurFilter } from 'pixi.js';
 import { Stage, Container, Sprite, useTick, Graphics } from '@pixi/react';
-import { useCallback, useMemo, useReducer, useRef } from 'react';
+import { useState, useMemo, useReducer, useRef } from 'react';
+import {animated, useSpring} from '@react-spring/web'
 
 type Hash = number;
 
@@ -65,20 +66,63 @@ type BlocktreeProps = {
 }
 
 export const Blocktree = (props: BlocktreeProps) => {
+  const [blocktree, setBlocktree] = useState(props.data)
   const blockSize = 100
-  const positions = useMemo(() => getLayout(props.data), [props.data])
+  const blockGap = 100
+  const positions = useMemo(() => getLayout(blocktree), [blocktree])
+  const levels = getLevels(blocktree)
+  const levelCounts = levels.map(level => Object.keys(level).length)
+  const width = (Math.max(...levelCounts) - 1) * (blockSize + blockGap) + blockSize
+  const height = (levels.length - 1) * (blockSize + blockGap) + blockSize
+
+  const spring = useSpring({
+    transform: `translateY(-${levels.length * 50}px)`
+  })
 
   return (
-    <svg viewBox='0 0 1000 1000'>
-      {Object.keys(props.data).map(hash => (
+    <animated.svg
+      viewBox={`${-width / 2} ${-blockSize / 2} ${width} ${height}`}
+      style={{width: width, height: height, ...spring}}
+    >
+      <rect
+        x={-width / 2}
+        y={-blockSize / 2}
+        width={width}
+        height={height}
+        fill='none'
+        stroke='black'
+        strokeWidth={2}
+      />
+      {Object.keys(blocktree).map(hash => (
         <rect
           key={hash}
           x={positions[parseInt(hash)][0] - blockSize / 2}
           y={positions[parseInt(hash)][1] - blockSize / 2}
           width={blockSize}
           height={blockSize}
+          fill={blocktree[parseInt(hash)].minerType === 'honest' ? 'white' : 'red'}
+          onClick={() => setBlocktree(prev => ({
+            ...prev,
+            [Math.floor(Math.random() * 1e6)]: {
+              parent: parseInt(hash),
+              minerType: 'honest',
+            }
+          }))}
         />
       ))}
-    </svg>
+      {Object.entries(blocktree).map(([hash, block]) => (
+        block.parent === 0
+          ? null
+          : <line
+            key={hash}
+            x1={positions[parseInt(hash)][0]}
+            y1={positions[parseInt(hash)][1]}
+            x2={positions[block.parent][0]}
+            y2={positions[block.parent][1]}
+            stroke='white'
+            strokeWidth={8}
+          />
+      ))}
+    </animated.svg>
   );
 };
