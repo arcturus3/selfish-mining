@@ -68,6 +68,12 @@ type BlocktreeProps = {
 }
 
 export const Blocktree = (props: BlocktreeProps) => {
+  const honestColor = 'hsl(0 100% 100%)'
+  const adversaryColor = 'hsl(0 74% 40%)'
+  const edgeColor = 'hsl(0 100% 100%)'
+  const backgroundColor = 'hsl(0 0% 5%)'
+  const strokeWidth = 4
+
   const positions = useMemo(
     () => getPositions(props.blocks, props.blockSize + props.blockGap),
     [props.blocks, props.blockSize, props.blockGap]
@@ -77,40 +83,45 @@ export const Blocktree = (props: BlocktreeProps) => {
     () => {
       const xs = [...positions.values()].map(([x, y]) => x)
       const ys = [...positions.values()].map(([x, y]) => y)
-      const width = Math.max(...xs) - Math.min(...xs) + props.blockSize
-      const height = Math.max(...ys) - Math.min(...ys) + props.blockSize
+      const width = Math.max(...xs) - Math.min(...xs) + props.blockSize + strokeWidth
+      const height = Math.max(...ys) - Math.min(...ys) + props.blockSize + strokeWidth
       return [width, height]
     },
     [props.blockSize, positions]
   )
 
   const translateY = useMemo(
-    () => (props.blockSize + props.blockGap) * props.visibleHeight - height,
+    () => (props.blockSize + props.blockGap) * props.visibleHeight - height - strokeWidth,
     [props.blockSize, props.blockGap, props.visibleHeight, height]
   )
 
   const spring = useSpring({
-    transform: `translateY(${translateY}px)`
+    transform: `translateY(${translateY}px)`,
+    delay: 250,
   })
 
   return (
     <animated.svg
-      viewBox={`${-width / 2} ${-props.blockSize / 2} ${width} ${height}`}
+      viewBox={`${-width / 2} ${-(props.blockSize + strokeWidth) / 2} ${width} ${height}`}
       style={{
         width: width,
         height: height,
         ...spring,
       }}
     >
-      <rect
-        x={-width / 2}
-        y={-props.blockSize / 2}
-        width={width}
-        height={height}
-        fill='none'
-        stroke='green'
-        strokeWidth={2}
-      />
+      {[...props.blocks].map(([hash, block]) => (
+        block.parent === 0
+          ? null
+          : <line
+            key={hash}
+            x1={positions.get(hash)![0]}
+            y1={positions.get(hash)![1] - props.blockSize / 2 + strokeWidth}
+            x2={positions.get(block.parent)![0]}
+            y2={positions.get(block.parent)![1] + props.blockSize / 2 - strokeWidth}
+            stroke={edgeColor}
+            strokeWidth={strokeWidth}
+          />
+      ))}
       {[...props.blocks].map(([hash, block]) => (
         <rect
           key={hash}
@@ -118,22 +129,11 @@ export const Blocktree = (props: BlocktreeProps) => {
           y={positions.get(hash)![1] - props.blockSize / 2}
           width={props.blockSize}
           height={props.blockSize}
-          fill={block.minerType === 'honest' ? 'white' : 'red'}
+          fill={backgroundColor}
+          stroke={block.minerType === 'honest' ? honestColor : adversaryColor}
+          strokeWidth={strokeWidth}
           onClick={() => props.debugAddBlock?.(hash)}
         />
-      ))}
-      {[...props.blocks].map(([hash, block]) => (
-        block.parent === 0
-          ? null
-          : <line
-            key={hash}
-            x1={positions.get(hash)![0]}
-            y1={positions.get(hash)![1] - props.blockSize / 2}
-            x2={positions.get(block.parent)![0]}
-            y2={positions.get(block.parent)![1] + props.blockSize / 2}
-            stroke='white'
-            strokeWidth={8}
-          />
       ))}
     </animated.svg>
   )
