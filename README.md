@@ -36,7 +36,10 @@
 > |-------------------|-----------|----------------|-------------------------------------|
 > | `honest_power` |  required | list[int]   | List of honest mining powers        |
 > | `adversarial_power` |  required | list[int]   | List of adversarial mining powers        |
-> | Must sum to 1 |
+> | ^^ Must sum to 1 |
+> | `difficulty` |  optional | str   | Difficulty, EX: 0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff        |
+
+###### Example: ```{"honest_power":[0.2,0.1], "adversarial_power":[0.7], "difficulty":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}```
 
 ##### Responses
 
