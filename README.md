@@ -52,6 +52,10 @@
  <summary><code>GET</code> <code><b>/stop</b></code> <code>(Stop Mining)</code></summary>
 </details>
 
+<details>
+ <summary><code>GET</code> <code><b>/restart</b></code> <code>(Restart Mining - Call /start afterwards)</code></summary>
+</details>
+
 
 <details>
  <summary><code>GET</code> <code><b>/blockchain</b></code> <code>(Get String representation of the Blockchain)</code></summary>
