@@ -72,6 +72,8 @@ type BlocktreeProps = {
 export const Blocktree = (props: BlocktreeProps) => {
   const honestColor = 'hsl(0 100% 100%)'
   const adversaryColor = 'hsl(0 74% 40%)'
+  const unpublishedColor = 'hsl(51 100% 50%)'
+  const genesisColor = 'hsl(0 0% 30%)'
   const edgeColor = 'hsl(0 100% 100%)'
   const backgroundColor = 'hsl(0 0% 5%)'
   const strokeWidth = 4
@@ -125,17 +127,40 @@ export const Blocktree = (props: BlocktreeProps) => {
           />
       ))}
       {[...props.blocks].map(([hash, block]) => (
-        <rect
-          key={hash}
-          x={positions.get(hash)![0] - props.blockSize / 2}
-          y={positions.get(hash)![1] - props.blockSize / 2}
-          width={props.blockSize}
-          height={props.blockSize}
-          fill={backgroundColor}
-          stroke={block.minerType === 'honest' ? honestColor : adversaryColor}
-          strokeWidth={strokeWidth}
-          onClick={() => props.debugAddBlock?.(hash)}
-        />
+        <>
+          <rect
+            key={'node-' + hash}
+            x={positions.get(hash)![0] - props.blockSize / 2}
+            y={positions.get(hash)![1] - props.blockSize / 2}
+            width={props.blockSize}
+            height={props.blockSize}
+            fill={backgroundColor}
+            stroke={block.minerType === 'honest'
+              ? honestColor
+              : (block.minerType === 'genesis'
+                ? genesisColor
+                : (block.published
+                  ? adversaryColor
+                  : unpublishedColor
+                )
+              )
+            }
+            strokeWidth={strokeWidth}
+            onClick={() => props.debugAddBlock?.(hash)}
+          />
+          <text
+            key={'edge-' + hash}
+            x={positions.get(hash)![0]}
+            y={positions.get(hash)![1]}
+            textAnchor='middle'
+            alignmentBaseline='middle'
+            fill={edgeColor}
+            fontFamily='Consolas, monospace'
+            fontSize={20}
+          >
+            {block.minerAddress}
+          </text>
+        </>
       ))}
     </animated.svg>
   )

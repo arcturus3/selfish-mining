@@ -27,6 +27,10 @@ body {
   height: 100%;
 }
 
+.radix-themes {
+  height: 100%;
+}
+
 #root {
   height: 100%;
 }
