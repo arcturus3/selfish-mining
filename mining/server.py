@@ -1,15 +1,25 @@
-from flask import Flask
-from flask import request
+import json
+from flask import Flask, request, jsonify, Response
 from blockchain import Blockchain
+from json import JSONEncoder
 
 from threading import Thread
 from miner import Miner
+from block import Block
 
+class CustomEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Block):
+            return obj.toJSON()
+        return JSONEncoder.default(self, obj)
+    
 blockchain = Blockchain()
 # Use equal hash power
 miner = Miner(blockchain)
 app = Flask(__name__)
+app.json_encoder = CustomEncoder
 
+    
 @app.route('/start', methods=['GET', 'POST'])
 def start():
     if request.method == 'POST':
@@ -20,6 +30,8 @@ def start():
             if sum(good_hash) + sum(bad_hash) != 1:
                 return "Hash power does not sum to 1", 400
             miner.init_settings(good_miners=good_hash, bad_miners=bad_hash)
+            if "difficulty" in data:
+                blockchain.set_difficulty(data["difficulty"])
             
     if "miner" not in app.config:
         thread = Thread(target=miner.start_mining)
@@ -43,13 +55,25 @@ def stop():
     else:
         return "Never started or Already Stopped!"
 
+@app.route('/restart')
+def restart():
+    global blockchain
+    global miner
+    if "miner" in app.config:
+        miner.stop()
+        del app.config["miner"]
+    blockchain = Blockchain()
+    miner = Miner(blockchain)
+    return "Restarted!"
+
 @app.route('/blockchain')
 def get_blockchain():
-    return str(blockchain)
+    s = json.dumps(blockchain.get_blockchain(), cls=CustomEncoder)
+    return Response(s, mimetype='application/json')
 
 @app.route('/longest-chain')
 def get_longest_chain():
-    return str(blockchain.get_longest_chain())
+    return jsonify(blockchain.get_longest_chain())
 
 @app.route('/chain-quality')
 def get_quality():

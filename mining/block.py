@@ -1,5 +1,6 @@
 import hashlib
 import os
+import json
 
 
 class Block:
@@ -19,4 +20,7 @@ class Block:
         return self.parent
     
     def __repr__(self) -> str:
-        return str((self.parent, self.id))
+        return [self.parent, self.id]
+    
+    def toJSON(self):
+        return [self.parent, self.id]

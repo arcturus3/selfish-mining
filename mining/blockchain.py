@@ -4,7 +4,7 @@ class Blockchain:
     
     def __init__(self) -> None:
         self.genesis = Block(id="Genesis")
-        self.difficulty = "00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"    
+        self.difficulty = "0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"    
         self.blockchain = {self.genesis.get_hash(): self.genesis} # Map of string hash : Block
         self.tip = self.genesis.get_hash() # hash
         self.longest_chain_length = 1
@@ -40,6 +40,12 @@ class Blockchain:
                 num_good += 1
             current = self.blockchain[current].get_parent()
         return str((num_good) / tot)
+    
+    def get_blockchain(self):
+        return self.blockchain
+    
+    def set_difficulty(self, difficulty):
+        self.difficulty = difficulty
     
     
     def __repr__(self):
