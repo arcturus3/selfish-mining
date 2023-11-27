@@ -5,6 +5,37 @@
 - To run the mining backend, first install the python libraries in ``mining/requirements.txt``. 
 - Next, run ``python mining/server.py``
 
+### Endpoints
+
+
+<details>
+ <summary><code>GET</code> <code><b>/start</b></code> <code>(Start Mining)</code></summary>
+
+<!-- ##### Parameters
+
+> | name              |  type     | data type      | description                         |
+> |-------------------|-----------|----------------|-------------------------------------|
+> | `stub_numeric_id` |  required | int ($int64)   | The specific stub numeric id        |
+
+##### Responses
+
+> | http code     | content-type                      | response                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `200`         | `text/plain;charset=UTF-8`        | YAML string                                                         |
+> | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            | -->
+
+</details>
+
+
+<details>
+ <summary><code>GET</code> <code><b>/stop</b></code> <code>(Stop Mining)</code></summary>
+</details>
+
+
+<details>
+ <summary><code>GET</code> <code><b>/blockchain</b></code> <code>(Get String representation of the Blockchain)</code></summary>
+</details>
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

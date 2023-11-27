@@ -5,7 +5,8 @@ from threading import Thread
 from miner import Miner
 
 blockchain = Blockchain()
-miner = Miner(blockchain)
+# Use equal hash power
+miner = Miner(blockchain, [0.5], [0.5])
 app = Flask(__name__)
 
 @app.route('/start')
@@ -35,6 +36,14 @@ def stop():
 @app.route('/blockchain')
 def get_blockchain():
     return str(blockchain)
+
+@app.route('/longest-chain')
+def get_longest_chain():
+    return str(blockchain.get_longest_chain())
+
+@app.route('/chain-quality')
+def get_quality():
+    return blockchain.get_chain_quality()
 
 if __name__ == '__main__':
     app.run(debug=True, port=8765)
