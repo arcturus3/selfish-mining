@@ -11,13 +11,14 @@ class Blockchain:
         self.block_lengths = {self.genesis.get_hash(): 1} # Map of string hash : chain length from block to genesis
         
     def insert_block(self, block: Block) -> None:
-        parent_len = self.block_lengths[block.get_parent()]
-        hash = block.get_hash()
-        if parent_len >= self.longest_chain_length:
-            self.tip = hash
-            self.longest_chain_length = parent_len + 1
-        self.block_lengths[hash] = parent_len + 1
-        self.blockchain[hash] = block
+        if block.get_hash() <= self.difficulty:
+            parent_len = self.block_lengths[block.get_parent()]
+            hash = block.get_hash()
+            if parent_len >= self.longest_chain_length:
+                self.tip = hash
+                self.longest_chain_length = parent_len + 1
+            self.block_lengths[hash] = parent_len + 1
+            self.blockchain[hash] = block
         
     def get_tip(self) -> str:
         return self.tip
@@ -39,6 +40,8 @@ class Blockchain:
             if "Honest" in self.blockchain[current].get_id():
                 num_good += 1
             current = self.blockchain[current].get_parent()
+        if tot == 0:
+            return "0"
         return str((num_good) / tot)
     
     def get_blockchain(self):

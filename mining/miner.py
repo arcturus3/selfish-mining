@@ -60,23 +60,28 @@ class Miner:
                     self.bad_queue[id].append(block)
                 return
             else:
-                # We go in order of the adversaries alphabetically
-                found = False
-                for key in sorted(self.bad_queue.keys()):
-                    dq = self.bad_queue[key]
-                    if len(dq) > 0:
-                        found = True
-                        blk = dq.popleft()
-                        self.blockchain.insert_block(blk)
-                        self.bad_queue = defaultdict(deque) # reset the dict
-                        self.bad_queue[key] = dq
-                        break
-                if not found:
-                    block = Block(parent=parent, id=id)
-                    if block.get_hash() <= self.blockchain.difficulty:
+                block = Block(parent=parent, id=id)
+                if block.get_hash() <= self.blockchain.difficulty:
+                    found = False
+                    for key in sorted(self.bad_queue.keys()):
+                        dq = self.bad_queue[key]
+                        if len(dq) > 0:
+                            found = True
+                            blk = dq.popleft()
+                            self.blockchain.insert_block(blk)
+                        if len(dq) == 0:
+                            del self.bad_queue[key]
+                    if not found:
                         self.blockchain.insert_block(block)
                         
-            
+    def get_bad_blocks(self):
+        mp = {}
+        for key in self.bad_queue.keys():
+            dq = self.bad_queue[key]
+            for item in dq:
+                mp[item.get_hash()] = item
+        return mp
+    
     def start_mining(self):
         while True:
             if self.stop_thread:

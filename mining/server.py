@@ -68,8 +68,11 @@ def restart():
 
 @app.route('/blockchain')
 def get_blockchain():
-    s = json.dumps(blockchain.get_blockchain(), cls=CustomEncoder)
-    return Response(s, mimetype='application/json')
+    out = {
+        "published": blockchain.get_blockchain(),
+        "unpublished": miner.get_bad_blocks()
+    }
+    return Response(json.dumps(out, cls=CustomEncoder), mimetype='application/json')
 
 @app.route('/longest-chain')
 def get_longest_chain():
