@@ -1,3 +1,10 @@
+# Selfish Mining Attacks on Blockchains, Visualized
+
+## Mining Backend
+
+- To run the mining backend, first install the python libraries in ``mining/requirements.txt``. 
+- Next, run ``python mining/server.py``
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
