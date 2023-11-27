@@ -6,6 +6,7 @@ from json import JSONEncoder
 from threading import Thread
 from miner import Miner
 from block import Block
+from flask_cors import CORS
 
 class CustomEncoder(JSONEncoder):
     def default(self, obj):
@@ -17,6 +18,7 @@ blockchain = Blockchain()
 # Use equal hash power
 miner = Miner(blockchain)
 app = Flask(__name__)
+CORS(app)
 app.json_encoder = CustomEncoder
 
     

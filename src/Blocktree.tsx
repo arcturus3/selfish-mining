@@ -1,22 +1,24 @@
 import {useMemo} from 'react'
 import {animated, useSpring} from '@react-spring/web'
 
-export type Hash = number
+export type Hash = string
 
 export type Block = {
   parent: Hash
-  minerType: 'honest' | 'adversary'
+  minerType: 'honest' | 'adversary' | 'genesis'
+  minerAddress: string
+  published: boolean
 }
 
 export type Blocks = Map<Hash, Block>
 
 const getLevels = (blocks: Blocks) => {
   const children = new Map<Hash, Hash[]>()
-  let genesisHash: Hash = -1
+  let genesisHash: Hash = ''
   for (const [hash, block] of blocks) {
     children.set(hash, [])
     // genesis block has a parent hash of 0
-    if (block.parent === 0) genesisHash = hash
+    if (block.parent === '0') genesisHash = hash
   }
   for (const [hash, block] of blocks) {
     if (hash !== genesisHash) {
@@ -110,7 +112,7 @@ export const Blocktree = (props: BlocktreeProps) => {
       }}
     >
       {[...props.blocks].map(([hash, block]) => (
-        block.parent === 0
+        block.parent === '0'
           ? null
           : <line
             key={hash}
