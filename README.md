@@ -28,12 +28,43 @@
 
 
 <details>
+ <summary><code>POST</code> <code><b>/start</b></code> <code>(Start Mining)</code></summary>
+
+##### Body (As JSON)
+
+> | name              |  type     | data type      | description                         |
+> |-------------------|-----------|----------------|-------------------------------------|
+> | `honest_power` |  required | list[int]   | List of honest mining powers        |
+> | `adversarial_power` |  required | list[int]   | List of adversarial mining powers        |
+> | Must sum to 1 |
+
+##### Responses
+
+> | http code     | content-type                      | response                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `200`         | `text/plain;charset=UTF-8`        | `Started!`                                                         |
+> | `400`         | `application/json`                | `Hash power does not sum to 1`                            |
+
+</details>
+
+
+<details>
  <summary><code>GET</code> <code><b>/stop</b></code> <code>(Stop Mining)</code></summary>
 </details>
 
 
 <details>
  <summary><code>GET</code> <code><b>/blockchain</b></code> <code>(Get String representation of the Blockchain)</code></summary>
+</details>
+
+
+<details>
+ <summary><code>GET</code> <code><b>/chain-quality</b></code> <code>(Get chain quality as a decimal)</code></summary>
+</details>
+
+
+<details>
+ <summary><code>GET</code> <code><b>/longest-chain</b></code> <code>(Get block hashes of the longest chain)</code></summary>
 </details>
 
 # React + TypeScript + Vite

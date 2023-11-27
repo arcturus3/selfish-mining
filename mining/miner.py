@@ -9,7 +9,10 @@ class Miner:
     
     def __init__(self, blockchain: Blockchain, good_miners: [int] = None, bad_miners: [int] = None) -> None:
         self.blockchain = blockchain
-        self.mining_powers = [0.5, 0.5] # 50/50 mining power for now
+        self.stop_thread = False
+        self.init_settings(good_miners=good_miners, bad_miners=bad_miners)
+        
+    def init_settings(self, good_miners: [int] = None, bad_miners: [int] = None):
         if good_miners == None and bad_miners == None:
             self.selfish = False
         else:
@@ -31,8 +34,8 @@ class Miner:
                     breakpoints.append(tot)
                     self.mappings[i+len(good_miners)] = f"Adversary{str(i+1)}"
             self.breakpoints = breakpoints
-            
-        self.stop_thread = False
+            # print(breakpoints)
+            # print(self.mappings)
     
     def map_from_mining_power_to_miner(self, power):
         return self.mappings[bisect.bisect_left(self.breakpoints, power)]
@@ -74,7 +77,7 @@ class Miner:
                         self.blockchain.insert_block(block)
                         
             
-    def continuous_mining(self):
+    def start_mining(self):
         while True:
             if self.stop_thread:
                 break

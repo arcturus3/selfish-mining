@@ -4,7 +4,7 @@ class Blockchain:
     
     def __init__(self) -> None:
         self.genesis = Block(id="Genesis")
-        self.difficulty = "0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"    
+        self.difficulty = "00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"    
         self.blockchain = {self.genesis.get_hash(): self.genesis} # Map of string hash : Block
         self.tip = self.genesis.get_hash() # hash
         self.longest_chain_length = 1
@@ -31,7 +31,7 @@ class Blockchain:
         return chain[::-1]
     
     def get_chain_quality(self) -> str:
-        tot = 0
+        tot = -1 # don't count genesis
         num_good = 0
         current = self.tip
         for _ in range(self.longest_chain_length):

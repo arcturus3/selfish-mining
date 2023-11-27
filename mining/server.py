@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request
 from blockchain import Blockchain
 
 from threading import Thread
@@ -6,13 +7,22 @@ from miner import Miner
 
 blockchain = Blockchain()
 # Use equal hash power
-miner = Miner(blockchain, [0.5], [0.5])
+miner = Miner(blockchain)
 app = Flask(__name__)
 
-@app.route('/start')
+@app.route('/start', methods=['GET', 'POST'])
 def start():
+    if request.method == 'POST':
+        if "miner" not in app.config:
+            data = request.json
+            good_hash = data["honest_power"]
+            bad_hash = data["adversarial_power"]
+            if sum(good_hash) + sum(bad_hash) != 1:
+                return "Hash power does not sum to 1", 400
+            miner.init_settings(good_miners=good_hash, bad_miners=bad_hash)
+            
     if "miner" not in app.config:
-        thread = Thread(target=miner.continuous_mining)
+        thread = Thread(target=miner.start_mining)
         app.config["miner"] = thread
         thread.daemon = True  # Set as a daemon so it will be killed once the main thread is dead.
         thread.start()
