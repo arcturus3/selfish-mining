@@ -4,6 +4,8 @@ import axiosContext from "axios";
 import { Blocktree, Hash, Block, Blocks } from "./Blocktree";
 import data from "../data.json";
 
+import {v4 as uuid} from 'uuid'
+
 import {
   Checkbox,
   Container,
@@ -108,10 +110,12 @@ export const App = () => {
         {!mining ? (
           <Button
             onClick={() => {
+              const honest = [...miners.values()].filter(miner => !miner.adversary)
+              const adversary = [...miners.values()].filter(miner => miner.adversary)
               axios.post("/start", {
                 difficulty: '0'.repeat(difficulty) + 'f',
-                honest_power: [0.5],
-                adversarial_power: [0.5],
+                honest_power: honest.map(miner => miner.hashPower),
+                adversarial_power: adversary.map(miner => miner.hashPower),
               });
               setMining(true);
             }}
@@ -140,7 +144,7 @@ export const App = () => {
           onClick={() => {
             setMiners(
               produce((prev) => {
-                prev.set("30", { adversary: false, hashPower: 0 });
+                prev.set(uuid(), { adversary: false, hashPower: 0 });
               })
             );
           }}
@@ -166,6 +170,7 @@ export const App = () => {
             <Text as="label">
               Hash power
               <TextField.Input
+                type='number'
                 value={miner.hashPower}
                 onChange={(event) =>
                   setMiners(
@@ -179,7 +184,7 @@ export const App = () => {
               />
             </Text>
             <Button
-              onClick={() => (address: string) => {
+              onClick={() => {
                 setMiners(
                   produce((prev) => {
                     prev.delete(address);
