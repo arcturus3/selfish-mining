@@ -36,7 +36,8 @@ def start():
                 and sum(good_hash) + sum(bad_hash) != 1
             ):
                 return "Hash power does not sum to 1", 400
-            miner.init_settings(good_miners=good_hash, bad_miners=bad_hash)
+            if len(good_hash) + len(bad_hash) > 0:
+                miner.init_settings(good_miners=good_hash, bad_miners=bad_hash)
             if "difficulty" in data:
                 blockchain.set_difficulty(data["difficulty"])
 
