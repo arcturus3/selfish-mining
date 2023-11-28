@@ -4,8 +4,8 @@
 
 This repo provides code for directly simulating a selfish mining attack on a real, simplified blockchain. Blocks are actually mined using their hashes, and mining order is determined by the relative hash power of each miner. This code supports an unlimited number of honest and adversarial miners (given that their fractional hash power sums to 1).
 
-- To run the mining backend, first install the python libraries in ``mining/requirements.txt``. 
-- Next, run ``python mining/server.py``
+- To run the mining backend, first install the python libraries in `mining/requirements.txt`.
+- Next, run `python mining/server.py`
 
 ### Endpoints
 
@@ -24,7 +24,10 @@ This repo provides code for directly simulating a selfish mining attack on a rea
 > | ^^ Must sum to 1 |
 > | `difficulty` |  optional | str   | Difficulty, EX: 0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff        |
 
-###### Example: ```{"honest_power":[0.2,0.1], "adversarial_power":[0.7], "difficulty":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}```
+###### Example:
+```
+{"honest_power":[0.2,0.1], "adversarial_power":[0.7], "difficulty":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}
+```
 
 ##### Responses
 
@@ -45,31 +48,20 @@ This repo provides code for directly simulating a selfish mining attack on a rea
 
  <summary><code>GET</code> <code><b>/longest-chain</b></code> <code>(Get block hashes of the longest chain)</code></summary>
 
-<!-- 
-# React + TypeScript + Vite
+## Visualization
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Setup
 
-Currently, two official plugins are available:
+1. Install packages with `npm install`
+2. Start the development server with `npm run dev`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Usage
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list -->
+- Set the mining difficulty (higher leads to longer mining time)
+- Add some number of miners, set their hash powers as fractions which sum to 1, and choose which should be adversarial
+- Start mining, and stop mining to change simulation parameters again
+- The gray block is the genesis block
+- White blocks are blocks mined by honest nodes
+- Red blocks are published blocks mined by adversarial nodes
+- Yellow blocks are unpublished blocks mined by adversarial nodes
+- Block numbers are effectively the miner address, referring to the nth honest or adversarial miner
