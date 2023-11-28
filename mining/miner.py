@@ -82,10 +82,11 @@ class Miner:
 
     def get_bad_blocks(self):
         mp = {}
-        for key in self.bad_queue.keys():
-            dq = self.bad_queue[key]
-            for item in dq:
-                mp[item.get_hash()] = item
+        if self.bad_queue:
+            for key in self.bad_queue.keys():
+                dq = self.bad_queue[key]
+                for item in dq:
+                    mp[item.get_hash()] = item
         return mp
 
     def start_mining(self):
