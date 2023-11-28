@@ -13,6 +13,9 @@ class Miner:
         good_miners: [int] = None,
         bad_miners: [int] = None,
     ) -> None:
+        self.bad_queue = None
+        self.selfish = True
+        self.mappings = None
         self.blockchain = blockchain
         self.stop_thread = False
         self.init_settings(good_miners=good_miners, bad_miners=bad_miners)
