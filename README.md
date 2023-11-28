@@ -2,33 +2,18 @@
 
 ## Mining Backend
 
+This repo provides code for directly simulating a selfish mining attack on a real, simplified blockchain. Blocks are actually mined using their hashes, and mining order is determined by the relative hash power of each miner. This code supports an unlimited number of honest and adversarial miners (given that their fractional hash power sums to 1).
+
 - To run the mining backend, first install the python libraries in ``mining/requirements.txt``. 
 - Next, run ``python mining/server.py``
 
 ### Endpoints
 
 
-<details>
- <summary><code>GET</code> <code><b>/start</b></code> <code>(Start Mining)</code></summary>
-
-<!-- ##### Parameters
-
-> | name              |  type     | data type      | description                         |
-> |-------------------|-----------|----------------|-------------------------------------|
-> | `stub_numeric_id` |  required | int ($int64)   | The specific stub numeric id        |
-
-##### Responses
-
-> | http code     | content-type                      | response                                                            |
-> |---------------|-----------------------------------|---------------------------------------------------------------------|
-> | `200`         | `text/plain;charset=UTF-8`        | YAML string                                                         |
-> | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            | -->
-
-</details>
-
+<summary><code>GET</code> <code><b>/start</b></code> <code>(Start Mining with defaults)</code></summary>
 
 <details>
- <summary><code>POST</code> <code><b>/start</b></code> <code>(Start Mining)</code></summary>
+ <summary><code>POST</code> <code><b>/start</b></code> <code>(Start Mining with Custom Params)</code></summary>
 
 ##### Body (As JSON)
 
@@ -50,30 +35,17 @@
 
 </details>
 
-
-<details>
  <summary><code>GET</code> <code><b>/stop</b></code> <code>(Stop Mining)</code></summary>
-</details>
 
-<details>
  <summary><code>GET</code> <code><b>/restart</b></code> <code>(Restart Mining - Call /start afterwards)</code></summary>
-</details>
 
-
-<details>
  <summary><code>GET</code> <code><b>/blockchain</b></code> <code>(Get String representation of the Blockchain)</code></summary>
-</details>
 
-
-<details>
  <summary><code>GET</code> <code><b>/chain-quality</b></code> <code>(Get chain quality as a decimal)</code></summary>
-</details>
 
-
-<details>
  <summary><code>GET</code> <code><b>/longest-chain</b></code> <code>(Get block hashes of the longest chain)</code></summary>
-</details>
 
+<!-- 
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -100,4 +72,4 @@ If you are developing a production application, we recommend updating the config
 
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list -->
