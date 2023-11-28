@@ -24,7 +24,7 @@ enableMapSet();
 import { produce } from "immer";
 
 const axios = axiosContext.create({
-  baseURL: "http://localhost:8764",
+  baseURL: `http://${window.location.hostname}:8764`,
 });
 
 type Address = string;
